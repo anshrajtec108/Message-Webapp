@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const chartSchema=new Schema(
+const chatSchema=new Schema(
     {
         sendBy:{
             type: Schema.Types.ObjectId,
@@ -9,7 +9,7 @@ const chartSchema=new Schema(
         },
         sendTo:{
             type: Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
         },
         sendToGroup:{
             type: Schema.Types.ObjectId,
@@ -18,7 +18,7 @@ const chartSchema=new Schema(
         status:{
             type:String,
             index: true,
-            required: true,
+            default: false,
         },
         messageId:{
             type: Schema.Types.ObjectId,
@@ -30,4 +30,4 @@ const chartSchema=new Schema(
     }
 )
 
-export const Chart=mongoose.model("Chart",chartSchema)
+export const Chat=mongoose.model("Chat",chatSchema)

@@ -24,3 +24,5 @@ const relayShema=new Schema(
         timestamps:true
     }
 )
+
+export const Relay = mongoose.model("Relay", relayShema)

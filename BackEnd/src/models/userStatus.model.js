@@ -18,4 +18,5 @@ const userStatusSchema=new Schema(
     }
 )
 
+
 export const UserStatus = mongoose.model("UserStatus",userStatusSchema)

@@ -16,7 +16,7 @@ const groupSchema=new Schema(
                 ref:"User"
             }
         ],
-        avatar: {
+        groupAvatar: {
             type: String,// cloudinary url 
         },
         groupAdmin: [
