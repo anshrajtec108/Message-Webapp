@@ -6,6 +6,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { createMessage, deleteMessage } from "./message.controllers.js";
+import { UserStatus } from "../models/userStatus.model.js";
+import { createSingelMessageRelay } from "./relay.controllers.js";
 
 const saveSinglechatMessage=asyncHandler(async(req,res)=>{
     const { content, sendToContactNo}=req.body
@@ -25,6 +27,12 @@ const saveSinglechatMessage=asyncHandler(async(req,res)=>{
     })
     if(!chat){
         throw new ApiError(500," the chat is not saved  ")
+    }
+    const userStatus = await UserStatus.findOne({ userId: sendToId }, { status :1})
+
+    if(!userStatus){
+        await createSingelMessageRelay(chat?._id, sendToId)
+        console.log("the relay is create because the use is offline ", chat?._id);
     }
     return res.status(200)
     .json(new ApiResponse(200,[],"the chat is saved"))

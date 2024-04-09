@@ -4,14 +4,15 @@ import { Group } from "../models/group.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
-import { check_admin } from "./helper.js"
+import { check_admin, check_user_is_online_groups } from "./helper.js"
 import { createMessage, deleteMessage } from "./message.controllers.js"
+import { createGrouplMessageRelay } from "./relay.controllers.js"
 
 const saveGroupchatMessage = asyncHandler(async (req, res) => {
     const { content, groupId} = req.body
     let sendById=req.user?._id
     const group =await Group.findById(groupId)
-    if(group.lenght===0){
+    if (!group ||group.lenght===0){
         throw new ApiError(400,"the group is not exist ")
     }
     if(group?.adminMessage){
@@ -25,6 +26,12 @@ const saveGroupchatMessage = asyncHandler(async (req, res) => {
        if(!chat){
         throw new ApiError(500,"the chat message is not saved")
        }
+           const checkStatuslist = await check_user_is_online_groups(group.userList)
+           console.log(checkStatuslist);
+           if (!checkStatuslist.length < 0 ){
+                await createGrouplMessageRelay(checkStatuslist,message)
+               console.log("the Group relay is create because the users are offline ", checkStatuslist);
+           }
        return res.status(200)
        .json(new ApiResponse(200,[]," the group message is saved"))
        }else{
@@ -39,6 +46,14 @@ const saveGroupchatMessage = asyncHandler(async (req, res) => {
         })
         if (!chat) {
             throw new ApiError(500, "the chat message is not saved")
+        }
+        const checkStatuslist = await check_user_is_online_groups(group.userList)
+        // console.log("checkStatuslist",checkStatuslist);
+
+        if (checkStatuslist) {
+            const createRelayG = await createGrouplMessageRelay(checkStatuslist, message)
+            // console.log("createRelayG",createRelayG);
+            console.log("the Group relay is create because the users are offline ", checkStatuslist);
         }
         return res.status(200)
             .json(new ApiResponse(200, [], " the group message is saved"))
@@ -82,7 +97,7 @@ const getGroupChatMessage = asyncHandler(async (req, res) => {
         {
             $project: {
                 sendBYme: {
-                    $cond: { if: { $eq: ["$sendBy", new mongoose.Types.ObjectId(req.user?._id)] }, then: true, else: false }
+                    $cond: { if: { $eq: ["$sendByMe", new mongoose.Types.ObjectId(req.user?._id)] }, then: true, else: false }
                 },
                 message: '$messageData'
             }

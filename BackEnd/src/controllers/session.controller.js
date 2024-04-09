@@ -25,14 +25,21 @@ const endSession=asyncHandler(async(req,res)=>{
     if (!userId) {
         throw new ApiError(500, "the userID is required ")
     }
-    await UserStatus.findByIdAndDelete(userId)
+    const userStatusId = await UserStatus.find({ userId: userId })
 
+    if (!userStatusId) {
+        throw new ApiError(500, "the userID not resister in userStaus document  ")
+    }
+
+    const deleteUserStatus=await UserStatus.findByIdAndDelete(userStatusId)
+
+    if (!deleteUserStatus) {
+        throw new ApiError(500, "something want wrong  while delete user status ")
+    }
+    
     return res.status(200)
         .json(new ApiResponse("200", [], "the user is offline"))
 })
-
-
-
 
 export{
     entrySession,

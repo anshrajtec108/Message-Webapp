@@ -20,6 +20,7 @@ const createGroup=asyncHandler(async(req,res)=>{
         groupAvatar,
         groupAdmin:req.user?._id
     })
+    
     return res.status(200)
     .json(new ApiResponse(200,group,"the group is created"))
 })

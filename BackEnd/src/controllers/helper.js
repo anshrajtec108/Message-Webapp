@@ -1,5 +1,6 @@
 import { Contact } from "../models/contact.model.js";
 import { Group } from "../models/group.model.js";
+import { UserStatus } from "../models/userStatus.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const check_admin = async (groupId, adminId)=>{
@@ -34,7 +35,19 @@ const check_user_present_in_Contact=async (userId)=>{
         throw new ApiError(500, "Internal server error");
     }
 }
+
+const check_user_is_online_groups=async(userIdList)=>{
+    let usersOffline =[]
+    for (const userId of userIdList) {
+        const status = await UserStatus.findOne({ userId });
+        if (!status) {
+            usersOffline.push(userId);
+        }
+    }
+    return usersOffline
+}
 export{
     check_admin,
-    check_user_present_in_Contact
+    check_user_present_in_Contact,
+    check_user_is_online_groups
 }

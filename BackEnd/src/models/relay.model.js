@@ -1,8 +1,12 @@
-import { Schema } from "mongoose";
+import mongoose ,{ Schema } from "mongoose";
 
 const relayShema=new Schema(
-    {
-        charId:{
+    {   
+        sendTo:{
+        type: Schema.Types.ObjectId,
+        ref: "user"
+        },
+        chatId:{
             type:Schema.Types.ObjectId,
             ref:"Chart"
         },
@@ -12,11 +16,12 @@ const relayShema=new Schema(
                 ref: "User"
             }
         ],
+
         messageId:{
             type: Schema.Types.ObjectId,
             ref: "Message"
         }
-        
+        //the groupUserId and messageId is not requiered single user char 
          
         
     },
