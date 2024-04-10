@@ -2,6 +2,7 @@ import { UserStatus } from "../models/userStatus.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { getSingleMessageNotification } from "./notification.controllers.js";
 
 
 const entrySession=asyncHandler(async(req,res)=>{
@@ -15,8 +16,9 @@ const entrySession=asyncHandler(async(req,res)=>{
         userId,
         status
     })
+    const SingleMessageNotification= await getSingleMessageNotification(userId)
     return res.status(200)
-    .json(new ApiResponse("200",[],"the user is online"))
+        .json(new ApiResponse("200", [{SingleMessageNotification:SingleMessageNotification,}],"the user is online"))
 })
 
 const endSession=asyncHandler(async(req,res)=>{
