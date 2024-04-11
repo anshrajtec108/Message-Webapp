@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background:url(https://i.ibb.co/q9mygMq/background.jpg);
+   background-repeat: repeat;
+  background-size:cover;
+}
