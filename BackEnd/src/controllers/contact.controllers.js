@@ -77,7 +77,11 @@ const deleteUserForContact = asyncHandler(async (req, res) => {
 })
 
 const getAllContact = asyncHandler(async(req,res)=>{
-    const userId=req.user?._id
+    // const userId=req.user?._id
+    const userId ='660d82533407bb6f8f863d29'
+    if(!userId){
+        throw new ApiError(500,"the userID is required ")
+    }
     const contactInfo = await Contact.aggregate([
         {
             $match: {
@@ -98,6 +102,7 @@ const getAllContact = asyncHandler(async(req,res)=>{
                 userContactInfo: {
                     userName: { $arrayElemAt: ['$userList.userName', 0] }, // Get the first userName value from the array
                     email: '$contactUserInfo.email',
+                    avatar:'$contactUserInfo.avatar',
                     about: '$contactUserInfo.about',
                     contactNo: '$contactUserInfo.contactNo'
                 }

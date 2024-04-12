@@ -4,7 +4,7 @@ import { adduserTOcontact, deleteUserForContact, getAllContact } from "../contro
 
 
 const router = Router()
-router.use(verifyJWT)
+// router.use(verifyJWT)
 
 router.route('/getcontact').get(getAllContact)
 router.route("/save").post(adduserTOcontact)

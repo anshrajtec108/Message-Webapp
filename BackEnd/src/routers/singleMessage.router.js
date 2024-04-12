@@ -5,7 +5,7 @@ import { verifyJWT } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
-router.use(verifyJWT)
+// router.use(verifyJWT)
 router.post('/save', saveSinglechatMessage);
 
 router.post('/get', getSingleChatMessage);

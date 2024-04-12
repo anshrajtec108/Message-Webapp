@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
+import MessagingApp from '../messageDisplay/MessageDisplay';
+import { useDispatch } from "react-redux";
+import { saveIsDisplay, saveUserId, saveUserObj } from '../../store/reducers/ContactmessageDisplay';
 
-const Contact = ({ user }) => {
-    // const { avatar, name, online } = user;
-    let avatar ='https://i.ibb.co/q9mygMq/background.jpg';
-    let name="Ansh Raj";
-    let online=true
+
+const Contact = ({ userId, userContactInfo }) => {
+    
+    let dispatch=useDispatch()
+    // const UserId=userId
+    const userName=userContactInfo?.userName
+    // const email=userContactInfo?.email
+    // const about=userContactInfo?.about
+    // const contactNo=userContactInfo?.contactNo
+    const avatar = userContactInfo?.avatar
+    let online = true
+
+    const handelClickOnContact=()=>{
+        dispatch(saveIsDisplay(true))
+        dispatch(saveUserId(userId))
+        dispatch(saveUserObj(userContactInfo))
+    }
+
 
     return (
-        <div
+        <div onClick={handelClickOnContact}
             style={{
                 width: '100%',
                 height: '72px',
@@ -28,6 +44,7 @@ const Contact = ({ user }) => {
                     height: '50px',
                     borderRadius: '50%',
                     marginRight: '16px',
+                    objectFit:'cover'
                 }}
             />
 
@@ -40,7 +57,7 @@ const Contact = ({ user }) => {
                     color: '#333',
                 }}
             >
-                {name}
+                {userName}
             </div>
 
             {/* Online Status Indicator */}

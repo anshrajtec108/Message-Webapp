@@ -41,9 +41,11 @@ const saveSinglechatMessage=asyncHandler(async(req,res)=>{
 
 const getSingleChatMessage=asyncHandler(async(req,res)=>{
     const { sendToContactNo,page, }=req.body
-    let limit=30
-    let sendTot = await User.findOne({ contactNo: sendToContactNo })
-
+    console.log(sendToContactNo, page);
+    let limit=5
+    let sendTot = await User.findOne({ contactNo: parseInt(sendToContactNo) })
+    // let userId = req.user?._id
+    let userId ="660d82533407bb6f8f863d29"
     if (!sendTot) {
         throw new ApiError(400, "the send-TO user not found ")
     }
@@ -54,7 +56,7 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
                 $or: [
                     {
                         $and: [
-                            { sendBy: new mongoose.Types.ObjectId(req.user?._id) },
+                            { sendBy: new mongoose.Types.ObjectId(userId) },
                             { sendTo: new mongoose.Types.ObjectId(sendTot?._id) }
                         ]
                     },
