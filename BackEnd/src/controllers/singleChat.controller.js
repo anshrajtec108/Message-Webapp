@@ -42,7 +42,7 @@ const saveSinglechatMessage=asyncHandler(async(req,res)=>{
 const getSingleChatMessage=asyncHandler(async(req,res)=>{
     const { sendToContactNo,page, }=req.body
     console.log(sendToContactNo, page);
-    let limit=5
+    let limit=15
     let sendTot = await User.findOne({ contactNo: parseInt(sendToContactNo) })
     // let userId = req.user?._id
     let userId ="660d82533407bb6f8f863d29"
@@ -86,11 +86,9 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
                 as: "messageData"
             }
         },
+        { $unwind:'$messageData'},
         {
             $project: {
-                sendBYme: {
-                    $cond: { if: { $eq: ["$sendBy", new mongoose.Types.ObjectId(req.user?._id)] }, then: true, else: false }
-                },
                 sendBYthem: {
                     $cond: { if: { $ne: ["$sendBy", new mongoose.Types.ObjectId(req.user?._id)] }, then: true, else: false }
                 },
@@ -98,6 +96,7 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
             }
         }
     ]);
+    // console.log(data);
     return res.status(200)
     .json(new ApiResponse(200,data,"get all messages "))
 })

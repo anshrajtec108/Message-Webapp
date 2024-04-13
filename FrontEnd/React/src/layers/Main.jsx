@@ -34,8 +34,8 @@ function Main() {
             <div className="contactSide" style={{ flex: '2', background: 'url("https://i.ibb.co/q9mygMq/background.jpg") ',overflowY: 'auto',}}>
                 <ContactHeader/>
                 <div className="contact">
-                {contactInfo.map((contact) => (
-                    <Contact key={contact._id} userId={contact.userId} userContactInfo={contact.userContactInfo} />
+                    {contactInfo.map((contact, index) => (
+                    <Contact key={contact.userId+index} userId={contact.userId} userContactInfo={contact.userContactInfo} />
                 ))}
                 </div>
                 {/* <Contact /> */}
@@ -43,7 +43,7 @@ function Main() {
             </div>
             <div className="massageDetails" style={{ flex: '4', height:'100%', width:'100% ', backgroundColor:"green",overflow:'hidden'}}>
                 {/* <MessageDisplay /> */}
-                {currentUserInfo.isDisplay ? <MessagingApp userId={currentUserInfo.userId} userInfoObj={currentUserInfo.userObj} /> : <h1>Loading</h1>}
+                {currentUserInfo.isDisplay ? <MessagingApp key={currentUserInfo.userId+"keykry"} userId={currentUserInfo.userId} userInfoObj={currentUserInfo.userObj} /> : <h1>Loading</h1>}
               
             </div>
         </div>
