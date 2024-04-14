@@ -46,8 +46,19 @@ const check_user_is_online_groups=async(userIdList)=>{
     }
     return usersOffline
 }
+const check_Single_User_Online=async(userId)=>{
+    let res= false
+    const status = await UserStatus.findOne({userId:userId})
+    if(status){
+       res= true
+    }
+    return res
+
+}
 export{
     check_admin,
     check_user_present_in_Contact,
-    check_user_is_online_groups
+    check_user_is_online_groups,
+    check_Single_User_Online
+
 }

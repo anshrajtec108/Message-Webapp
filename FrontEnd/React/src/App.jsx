@@ -1,21 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useEffect } from 'react';
+import { createBrowserRouter, RouterProvider, Route, Routes, redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Main from './layers/Main';
+import Login from './components/registration/Login';
 import './App.css'
-import MessageDisplay from './components/messageDisplay/MessageDisplay'
-import Main from './layers/Main'
-import MessagingApp from './components/messageDisplay/MessageDisplay'
-
+import ProtectedRoute from './services/ProtectedRoute';
 function App() {
-  const [count, setCount] = useState(0)
+  
+
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <ProtectedRoute Component={Main} />
+    },
+    {
+      path: '/login',
+      element: <Login />
+    }
+  ]);
 
   return (
-    <>
-    {/* <MessageDisplay/> */}
-      <Main/>
-      {/* <MessagingApp/> */}
-    </>
-  )
+    <RouterProvider router={router}>
+    </RouterProvider>
+  );
 }
 
-export default App
+export default App;

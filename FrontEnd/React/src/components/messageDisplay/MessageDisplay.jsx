@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { makePostRequest } from '../../services/api';
+import { makePostRequest, socket } from '../../services/api';
+
 
 const MessagingApp = ({ userId, userInfoObj }) => {
     const [messages, setMessages] = useState([]);
@@ -7,13 +8,15 @@ const MessagingApp = ({ userId, userInfoObj }) => {
     const [loading, setLoading] = useState(false);
     const [messageInput, setMessageInput] = useState('');
     const messagesEndRef = useRef(null);
+        // console.log(userInfoObj);
 
+
+    
     const getMessage = async () => {
         const sendPayload = {
-            'sendToContactNo': 86180097391,
+            'sendToContactNo': userInfoObj?.payload?.contactNo,
             'page': page
         };
-
         try {
             const res = await makePostRequest('/chatmessage/get', {}, sendPayload, {});
             if(page===1){
@@ -27,8 +30,6 @@ const MessagingApp = ({ userId, userInfoObj }) => {
         }
     };
 
-    //srcoll bottom 
-  
     const handleScroll = () => {
         const scrollableElement = messagesEndRef.current;
         if (scrollableElement.scrollTop === 0 && !loading) {
@@ -48,17 +49,22 @@ const MessagingApp = ({ userId, userInfoObj }) => {
             scrollableElement.removeEventListener('scroll', handleScroll);
         };
     }, []);
-
-  
-  
+    useEffect(() => {
+        socket.on('getMsgSingle', (msg) => {
+            console.log(msg);
+        });
+        return () => {
+            socket.off('getMsgSingle')
+        }
+    }, []);
     const handleMessageSend = () => {
         if (messageInput.trim() !== '') {
-            const newMessage = { text: messageInput, sender: 'sent' };
-            setMessages([...messages, newMessage]);
-            setMessageInput('');
+            socket.emit('sendMegSingle', { sendToContactNo: userInfoObj?.payload?.contactNo, content :messageInput})
+            setMessageInput('')
         }
     };
-    // scrollToBottom()
+
+    
     return (
         <div className="bg-gray-100 h-screen flex flex-col">
             {/* Top Header */}
@@ -70,7 +76,7 @@ const MessagingApp = ({ userId, userInfoObj }) => {
                         className="h-8 w-8 rounded-full mr-2"
                         style={{ objectFit: 'cover' }}
                     />
-                    <span className="font-semibold text-lg">{userInfoObj.payload?.userName}</span>
+                    <span className="font-semibold ml-3 text-lg">{userInfoObj.payload?.userName}</span>
                     <span className="font-semibold text-lg"> {userInfoObj.payload?.contactNo} </span>
                 </div>
                 <span className="text-sm ml-9">{"online"}</span>
@@ -92,11 +98,11 @@ const MessagingApp = ({ userId, userInfoObj }) => {
                         <div key={index} className={msg.sendBYthem === false ? 'self-end' : ''}>
                             {msg.sendBYthem === false ? (
                                 <div className="bg-blue-500 text-white p-2 rounded-lg shadow-md self-end">
-                                    {msg.message?.content}
+                                    {msg.message?.content}✔✔
                                 </div>
                             ) : (
                                 <div className="bg-white p-2 rounded-lg shadow-md self-end">
-                                    {msg.message?.content}
+                                        {msg.message?.content}✔✔ 
                                 </div>
                             )}
                         </div>

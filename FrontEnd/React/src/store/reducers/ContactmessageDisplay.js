@@ -7,7 +7,7 @@ const initialState={
     userId:''
 }
 
-const currentUserSlice =createSlice({
+const currentUserMessageSlice =createSlice({
     name:'currentUser',
     initialState,
     reducers:{
@@ -47,6 +47,6 @@ export const{
     saveIsDisplay,
     saveUserId,
     saveUserObj
-}=currentUserSlice.actions;
+} = currentUserMessageSlice.actions;
 
-export default currentUserSlice.reducer;
+export default currentUserMessageSlice.reducer;

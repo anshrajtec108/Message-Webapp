@@ -2,9 +2,6 @@ import mongoose, { Schema } from "mongoose";
 
 
 const userSUB_Schema = new Schema({
-    userName: {
-        type: String,
-    },
     userContactId: {
         type: Schema.Types.ObjectId,
         ref: "User"

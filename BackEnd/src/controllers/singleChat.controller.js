@@ -8,6 +8,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { createMessage, deleteMessage } from "./message.controllers.js";
 import { UserStatus } from "../models/userStatus.model.js";
 import { createSingelMessageRelay } from "./relay.controllers.js";
+import { check_Single_User_Online } from "./helper.js";
 
 const saveSinglechatMessage=asyncHandler(async(req,res)=>{
     const { content, sendToContactNo}=req.body
@@ -114,10 +115,17 @@ const deleteSingleChatMessage =asyncHandler(async(req,res)=>{
     .json(new ApiResponse(200,[],"the chat and message deleted"))
 })
 
+const userSingleOnline=asyncHandler(async(req,res)=>{
+    const {userId}=req.body 
+    const respone=await check_Single_User_Online(userId)
+    return res.status(200)
+    .json(new ApiResponse(200,respone,"the user Status online//offilne"))
+})
 
 export{
     saveSinglechatMessage,
     getSingleChatMessage,
-    deleteSingleChatMessage
+    deleteSingleChatMessage,
+    userSingleOnline
 
 }

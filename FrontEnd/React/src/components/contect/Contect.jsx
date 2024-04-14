@@ -3,9 +3,8 @@ import MessagingApp from '../messageDisplay/MessageDisplay';
 import { useDispatch } from "react-redux";
 import { saveIsDisplay, saveUserId, saveUserObj } from '../../store/reducers/ContactmessageDisplay';
 
-
 const Contact = ({ userId, userContactInfo }) => {
-    
+   
     let dispatch=useDispatch()
     // const UserId=userId
     const userName=userContactInfo?.userName

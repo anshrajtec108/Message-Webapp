@@ -6,38 +6,29 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const adduserTOcontact = asyncHandler(async (req, res) => {
-    const { name,userContactNo } = req.body;
+    const {userContactNo } = req.body;
 
     const user = await User.findOne({ contactNo: userContactNo });
     if (!user) {
         throw new ApiError(500, "User doesn't exist");
     }
-    if(!name){
-        name = user.name
-    }
 
     let contact = await Contact.findOne({ userId: req.user?._id });
 
     if (!contact) {
-        if (name && user) {  // Check if name and user are defined
-            contact = await Contact.create({
-                userId: req.user?._id,
-                userList: [{
-                    userName: name,
-                    userContactId: user._id
-                }]
-            });
-            return res.status(200).json(new ApiResponse("200", contact, "Your contact is created and the user is added"));
-        } else {
-            return res.status(400).json(new ApiResponse("400", null, "Name and user are required"));
-        }
+        contact = await Contact.create({
+            userId: req.user?._id,
+            userList: [{
+                userContactId: user._id
+            }]
+        });
+          return res.status(200).json(new ApiResponse("200", contact, "Your contact is created and the user is added")); 
     } else {
         const updatedContact = await Contact.findByIdAndUpdate(
             contact._id,
             {
                 $addToSet: {
                     userList: {
-                        userName: name || null,
                         userContactId: user._id
                     }
                 }
@@ -77,8 +68,8 @@ const deleteUserForContact = asyncHandler(async (req, res) => {
 })
 
 const getAllContact = asyncHandler(async(req,res)=>{
-    // const userId=req.user?._id
-    const userId ='660d82533407bb6f8f863d29'
+    const userId=req.user?._id
+    // const userId ='660d82533407bb6f8f863d29'
     if(!userId){
         throw new ApiError(500,"the userID is required ")
     }
@@ -100,7 +91,7 @@ const getAllContact = asyncHandler(async(req,res)=>{
         {
             $addFields: {
                 userContactInfo: {
-                    userName: { $arrayElemAt: ['$userList.userName', 0] }, // Get the first userName value from the array
+                    userName:'$contactUserInfo.name' , // Get the first userName value from the array
                     email: '$contactUserInfo.email',
                     avatar:'$contactUserInfo.avatar',
                     about: '$contactUserInfo.about',

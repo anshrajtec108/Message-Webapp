@@ -76,15 +76,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
 
-    const { email, contactNo, password } = req.body
-
-    if (!contactNo && !email) {
-        throw new ApiError(400, "contactNo OR password is requird")
+    const { contactNo, password } = req.body
+    console.log(contactNo, password);
+    if (!contactNo ) {
+        throw new ApiError(400, "contactNo is requird")
     }
 
-    const user = await User.findOne({
-        $or: [{ contactNo }, { email }]
-    })
+    const user = await User.findOne({ contactNo: contactNo })
 
     if (!user) {
         throw new ApiError(400, "User does not exist")
@@ -105,8 +103,9 @@ const loginUser = asyncHandler(async (req, res) => {
         secure: true
     }
     return res.status(200)
-        .cookie("accessToken", accessToken, option)
-        .cookie("refreshToken", refreshToken, option)
+        .cookie("accessToken", accessToken, { httpOnly: true, secure: true, sameSite: 'None' })
+
+        // .cookie("refreshToken", refreshToken, option)
         .json(
             new ApiResponse(
                 200,

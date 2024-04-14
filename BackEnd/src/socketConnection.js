@@ -9,3 +9,13 @@ const io = new Server(httpServer, {
         methods: ["GET", "POST"]
     }
 });
+
+io.on('connection',(socket)=>{
+    console.log("socket.id",socket.id)
+    socket.on('sendMegSingle',(data)=>{
+        console.log(data)
+        io.to(data?.sendToContactNo).emit("getMsgSingle", data.content)
+    })
+})
+
+export{httpServer}

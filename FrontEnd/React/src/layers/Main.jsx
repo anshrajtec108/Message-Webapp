@@ -4,16 +4,22 @@ import Contact from '../components/contect/Contect';
 import ContactHeader from '../components/contect/ContactHeader';
 import { makeGetRequest } from '../services/api';
 import { useDispatch, useSelector } from "react-redux";
+import { redirect } from 'react-router-dom';
 
 function Main() {
+    const currentUserLogin = useSelector((store) => store.currentUserLogin);
+
     const [contactInfo, setContactInfo] = useState([]);
+
     //to display and call the user message
     let currentUserInfo = useSelector((store) => store.currentUserinfo)
-    // const [isDisplayMeg, setIsDisplayMeg]=useState(false)
-    // const [userId,SetUserId]=useState('')
-    // const [user]
-    console.log(currentUserInfo);
-
+    function isLogin() {
+        const currentUserLoginStatus = currentUserLogin?.login;
+        if (!currentUserLoginStatus) {
+            console.log("User is not logged in for main layo");
+            redirect('/login');
+        }
+    }
     const getUserContact = () => {
 
         makeGetRequest('/contact/getcontact', {}, {})
@@ -27,8 +33,13 @@ function Main() {
             })
     }
     useEffect(() => {
+        isLogin()
+        
+    }, [currentUserLogin]); 
+    
+    useEffect(()=>{
         getUserContact();
-    }, []); 
+    },[])
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
             <div className="contactSide" style={{ flex: '2', background: 'url("https://i.ibb.co/q9mygMq/background.jpg") ',overflowY: 'auto',}}>
