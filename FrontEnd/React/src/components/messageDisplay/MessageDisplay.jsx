@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { makePostRequest, socket } from '../../services/api';
 
-
 const MessagingApp = ({ userId, userInfoObj }) => {
     const [messages, setMessages] = useState([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [messageInput, setMessageInput] = useState('');
     const messagesEndRef = useRef(null);
-        // console.log(userInfoObj);
 
-
-    
     const getMessage = async () => {
         const sendPayload = {
             'sendToContactNo': userInfoObj?.payload?.contactNo,
@@ -19,11 +15,10 @@ const MessagingApp = ({ userId, userInfoObj }) => {
         };
         try {
             const res = await makePostRequest('/chatmessage/get', {}, sendPayload, {});
-            if(page===1){
-                setMessages([...res.data])
-            }else{
-                console.log("else ...res.data",...res.data);
-            setMessages((prevMessages) => [...res.data, ...prevMessages]);
+            if (page === 1) {
+                setMessages([...res.data.reverse()]);
+            } else {
+                setMessages((prevMessages) => [...res.data.reverse(), ...prevMessages]);
             }
         } catch (err) {
             console.log(err);
@@ -40,7 +35,7 @@ const MessagingApp = ({ userId, userInfoObj }) => {
 
     useEffect(() => {
         getMessage();
-    }, [page]);
+    }, [page, userInfoObj, userInfoObj?.payload?.contactNo]);
 
     useEffect(() => {
         const scrollableElement = messagesEndRef.current;
@@ -49,22 +44,42 @@ const MessagingApp = ({ userId, userInfoObj }) => {
             scrollableElement.removeEventListener('scroll', handleScroll);
         };
     }, []);
-    useEffect(() => {
-        socket.on('getMsgSingle', (msg) => {
-            console.log(msg);
-        });
-        return () => {
-            socket.off('getMsgSingle')
-        }
-    }, []);
-    const handleMessageSend = () => {
-        if (messageInput.trim() !== '') {
-            socket.emit('sendMegSingle', { sendToContactNo: userInfoObj?.payload?.contactNo, content :messageInput})
-            setMessageInput('')
+
+    const handleMessageSend = async () => {
+        try {
+            if (messageInput.trim() !== '' && userInfoObj?.payload?.contactNo) {
+                socket.emit('sendMegSingle', { sendToContactNo: userInfoObj.payload.contactNo, content: messageInput });
+
+                let sendMessageToSave = {
+                    "content": messageInput,
+                    "sendToContactNo": userInfoObj.payload.contactNo
+                };
+
+                const save = await makePostRequest('/chatmessage/save', {}, sendMessageToSave, {});
+
+                let sendMessageObj = {
+                    _id: save?._id || "Default value refresh the page",
+                    sendBYthem: false,
+                    message: {
+                        _id: save?.messageId || "Default value refresh the page",
+                        content: messageInput,
+                        createdAt: save?.createdAt || "Default value refresh the page",
+                        updatedAt: save?.updatedAt || "Default value refresh the page",
+                        __v: 0
+                    }
+                };
+
+                setMessages((prevMessages) => [...prevMessages, sendMessageObj]);
+                setMessageInput('');
+            } else {
+                console.error('Invalid message input or missing user information');
+            }
+        } catch (error) {
+            console.error('Error occurred while sending or saving message:', error);
+            // Handle the error (e.g., display an error message to the user)
         }
     };
 
-    
     return (
         <div className="bg-gray-100 h-screen flex flex-col">
             {/* Top Header */}
@@ -88,23 +103,24 @@ const MessagingApp = ({ userId, userInfoObj }) => {
             </div>
 
             {/* Message Area */}
-            <div className="flex-1 overflow-y-auto p-4" style={{ overflowY: 'auto' }} ref={(node)=>{
+            <div className="flex-1 overflow-y-auto p-4" style={{ overflowY: 'auto' }} ref={(node) => {
                 messagesEndRef.current = node;
-            }} >
+            }}>
                 {/* Messages */}
                 {loading && <div>Loading...</div>}
                 <div className="flex flex-col space-y-2">
                     {messages.map((msg, index) => (
                         <div key={index} className={msg.sendBYthem === false ? 'self-end' : ''}>
-                            {msg.sendBYthem === false ? (
-                                <div className="bg-blue-500 text-white p-2 rounded-lg shadow-md self-end">
-                                    {msg.message?.content}✔✔
+                            {/* Month header logic */}
+                            {index === 0 || new Date(messages[index - 1].message.createdAt).getMonth() !== new Date(msg.message.createdAt).getMonth() ? (
+                                <div className="text-center text-gray-500">
+                                    {new Date(msg.message.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' })}
                                 </div>
-                            ) : (
-                                <div className="bg-white p-2 rounded-lg shadow-md self-end">
-                                        {msg.message?.content}✔✔ 
-                                </div>
-                            )}
+                            ) : null}
+                            {/* Message content */}
+                            <div className={msg.sendBYthem === false ? 'bg-blue-500 text-white p-2 rounded-lg shadow-md self-end' : 'bg-white p-2 rounded-lg shadow-md self-end'}>
+                                {msg.message?.content}✔✔
+                            </div>
                         </div>
                     ))}
                 </div>

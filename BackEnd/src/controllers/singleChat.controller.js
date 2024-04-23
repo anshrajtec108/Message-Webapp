@@ -12,6 +12,7 @@ import { check_Single_User_Online } from "./helper.js";
 
 const saveSinglechatMessage=asyncHandler(async(req,res)=>{
     const { content, sendToContactNo}=req.body
+    console.log('content, sendToContactNo', content, sendToContactNo);
     let sendTo = await User.findOne({ contactNo: sendToContactNo });
 
     if (sendTo.length===0) {
@@ -35,8 +36,9 @@ const saveSinglechatMessage=asyncHandler(async(req,res)=>{
         await createSingelMessageRelay(chat?._id, sendToId)
         console.log("the relay is create because the use is offline ", chat?._id);
     }
+    console.log(chat);
     return res.status(200)
-    .json(new ApiResponse(200,[],"the chat is saved"))
+        .json(new ApiResponse(200, chat ,"the chat is saved"))
 })
 
 
@@ -45,8 +47,8 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
     console.log(sendToContactNo, page);
     let limit=15
     let sendTot = await User.findOne({ contactNo: parseInt(sendToContactNo) })
-    // let userId = req.user?._id
-    let userId ="660d82533407bb6f8f863d29"
+    let userId = req.user?._id
+    // let userId ="660d82533407bb6f8f863d29"
     if (!sendTot) {
         throw new ApiError(400, "the send-TO user not found ")
     }
@@ -71,7 +73,7 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
             }
         },
         {
-            $sort: { createdAt: -1 }
+            $sort: { createdAt :-1}
         },
         {
             $skip: (page - 1) * limit
@@ -87,7 +89,7 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
                 as: "messageData"
             }
         },
-        { $unwind:'$messageData'},
+        { $unwind: '$messageData' },
         {
             $project: {
                 sendBYthem: {
@@ -95,9 +97,14 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
                 },
                 message: '$messageData'
             }
+        },
+        // Sort by updatedAt in descending order (latest first)
+        {
+            $sort: { 'message.createdAt': -1 }
         }
     ]);
-    // console.log(data);
+
+    console.log(data);
     return res.status(200)
     .json(new ApiResponse(200,data,"get all messages "))
 })

@@ -13,13 +13,7 @@ function Main() {
 
     //to display and call the user message
     let currentUserInfo = useSelector((store) => store.currentUserinfo)
-    function isLogin() {
-        const currentUserLoginStatus = currentUserLogin?.login;
-        if (!currentUserLoginStatus) {
-            console.log("User is not logged in for main layo");
-            redirect('/login');
-        }
-    }
+    console.log('currentUserInfo', currentUserInfo);
     const getUserContact = () => {
 
         makeGetRequest('/contact/getcontact', {}, {})
@@ -32,10 +26,7 @@ function Main() {
                 console.log(err);
             })
     }
-    useEffect(() => {
-        isLogin()
-        
-    }, [currentUserLogin]); 
+
     
     useEffect(()=>{
         getUserContact();
