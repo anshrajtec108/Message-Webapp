@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MessagingApp from '../components/messageDisplay/MessageDisplay';
 import Contact from '../components/contect/Contect';
 import ContactHeader from '../components/contect/ContactHeader';
-import { makeGetRequest } from '../services/api';
+import { makeDeleteRequest, makeGetRequest, makePostRequest } from '../services/api';
 import { useDispatch, useSelector } from "react-redux";
 import { redirect } from 'react-router-dom';
 
@@ -27,9 +27,29 @@ function Main() {
             })
     }
 
+    const createSession=async()=>{
+       const res= await makePostRequest('/session/entrysession', {}, { "status": true },{})
+       console.log("res of create session",res);
+        return
+    }
+    const endSession=async()=>{
+        await makeDeleteRequest('/session/endsession',{},{})
+        
+    }
     
     useEffect(()=>{
         getUserContact();
+        createSession();
+        const handleUnload = () => {
+            endSession();
+        };
+
+        window.addEventListener('beforeunload', handleUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleUnload);
+            endSession(); // Call endSession explicitly on component unmount as well
+        };
     },[])
     return (
         <div style={{ display: 'flex', height: '100vh' }}>

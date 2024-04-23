@@ -7,6 +7,9 @@ const MessagingApp = ({ userId, userInfoObj }) => {
     const [loading, setLoading] = useState(false);
     const [messageInput, setMessageInput] = useState('');
     const messagesEndRef = useRef(null);
+    
+    // const roomName = `${localStorage.getItem('Contect')}-${userInfoObj?.payload?.contactNo}`
+    const roomName = parseInt(localStorage.getItem('Contect'))+parseInt(userInfoObj?.payload?.contactNo)
 
     const getMessage = async () => {
         const sendPayload = {
@@ -32,10 +35,32 @@ const MessagingApp = ({ userId, userInfoObj }) => {
             setPage((prevPage) => prevPage + 1);
         }
     };
-
+//get all the message and Join the room
     useEffect(() => {
         getMessage();
+        
+        socket.emit('joinRoom', roomName);
     }, [page, userInfoObj, userInfoObj?.payload?.contactNo]);
+
+    //Socket Received message
+    useEffect(() => {
+        const handleReceiveMessage = (msg) => {
+            if (msg.sendBy == localStorage.getItem('Contect')){  
+                return 
+        }else{
+                // console.log('Received message:', msg);
+                setMessages((prevMessages) => [...prevMessages, { ...msg, sendBYthem: true }]);
+        }
+        };
+
+        socket.on('Receivemessage', handleReceiveMessage);
+
+        return () => {
+            // Clean up the event listener when the component unmounts
+            socket.off('Receivemessage', handleReceiveMessage);
+        };
+    }, [userInfoObj, userInfoObj?.payload?.contactNo]);
+
 
     useEffect(() => {
         const scrollableElement = messagesEndRef.current;
@@ -56,20 +81,21 @@ const MessagingApp = ({ userId, userInfoObj }) => {
                 };
 
                 const save = await makePostRequest('/chatmessage/save', {}, sendMessageToSave, {});
-
-                let sendMessageObj = {
-                    _id: save?._id || "Default value refresh the page",
-                    sendBYthem: false,
+                let sendMessageObj 
+                if (save.statusCode<=200){
+                    sendMessageObj = {
+                    _id: save.data?._id || "Default value refresh the page",
+                    sendBYthem: save.data?.sendBYthem,
                     message: {
-                        _id: save?.messageId || "Default value refresh the page",
+                        _id: save.data?.messageId ,
                         content: messageInput,
-                        createdAt: save?.createdAt || "Default value refresh the page",
-                        updatedAt: save?.updatedAt || "Default value refresh the page",
+                        createdAt: save.data?.createdAt || "Default value refresh the page",
+                        updatedAt: save.data?.updatedAt || "Default value refresh the page",
                         __v: 0
                     }
-                };
-
-                setMessages((prevMessages) => [...prevMessages, sendMessageObj]);
+                };}
+                setMessages((prevMessages) => [...prevMessages, { ...sendMessageObj, sendBYthem: false }]);
+                socket.emit('sendMessage', roomName, { ...sendMessageObj, 'sendToContactNo': userInfoObj?.payload?.contactNo, 'sendBy': localStorage.getItem('Contect') });
                 setMessageInput('');
             } else {
                 console.error('Invalid message input or missing user information');
@@ -91,7 +117,7 @@ const MessagingApp = ({ userId, userInfoObj }) => {
                         className="h-8 w-8 rounded-full mr-2"
                         style={{ objectFit: 'cover' }}
                     />
-                    <span className="font-semibold ml-3 text-lg">{userInfoObj.payload?.userName}</span>
+                    <span className="font-semibold ml-4  mr-5 text-lg">{userInfoObj.payload?.userName}</span>
                     <span className="font-semibold text-lg"> {userInfoObj.payload?.contactNo} </span>
                 </div>
                 <span className="text-sm ml-9">{"online"}</span>

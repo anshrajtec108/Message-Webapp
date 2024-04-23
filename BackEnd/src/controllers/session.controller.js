@@ -17,12 +17,14 @@ const entrySession=asyncHandler(async(req,res)=>{
         status
     })
     const SingleMessageNotification= await getSingleMessageNotification(userId)
+    console.log('session is created ');
     return res.status(200)
         .json(new ApiResponse("200", [{SingleMessageNotification:SingleMessageNotification,}],"the user is online"))
 })
 
 const endSession=asyncHandler(async(req,res)=>{
-    const { userId }=req.body
+    // const { userId }=req.body
+    const  userId =req?.user?._id
 
     if (!userId) {
         throw new ApiError(500, "the userID is required ")
@@ -35,10 +37,10 @@ const endSession=asyncHandler(async(req,res)=>{
 
     const deleteUserStatus=await UserStatus.findByIdAndDelete(userStatusId)
 
-    if (!deleteUserStatus) {
-        throw new ApiError(500, "something want wrong  while delete user status ")
-    }
-    
+    // if (!deleteUserStatus) {
+    //     throw new ApiError(500, "something want wrong  while delete user status ")
+    // }
+    console.log('session is deleted ');
     return res.status(200)
         .json(new ApiResponse("200", [], "the user is offline"))
 })

@@ -36,7 +36,7 @@ const saveSinglechatMessage=asyncHandler(async(req,res)=>{
         await createSingelMessageRelay(chat?._id, sendToId)
         console.log("the relay is create because the use is offline ", chat?._id);
     }
-    console.log(chat);
+    // console.log(chat);
     return res.status(200)
         .json(new ApiResponse(200, chat ,"the chat is saved"))
 })
@@ -104,7 +104,7 @@ const getSingleChatMessage=asyncHandler(async(req,res)=>{
         }
     ]);
 
-    console.log(data);
+    // console.log(data);
     return res.status(200)
     .json(new ApiResponse(200,data,"get all messages "))
 })

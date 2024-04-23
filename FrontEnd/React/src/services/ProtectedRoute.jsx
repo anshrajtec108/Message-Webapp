@@ -6,7 +6,7 @@ function ProtectedRoute({ Component }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(!Cookies.get('accessToken'));
+        // console.log(!Cookies.get('accessToken'));
       
         if (!Cookies.get('accessToken') ){
             console.log('Please login');
