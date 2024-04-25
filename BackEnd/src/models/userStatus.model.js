@@ -5,7 +5,7 @@ const userStatusSchema=new Schema(
         userId:{
             type: Schema.Types.ObjectId,
             required: true,
-            unique: true,
+            // unique: true,
             index: true
         },
         status:{

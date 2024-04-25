@@ -19,7 +19,7 @@ const entrySession=asyncHandler(async(req,res)=>{
     const SingleMessageNotification= await getSingleMessageNotification(userId)
     console.log('session is created ');
     return res.status(200)
-        .json(new ApiResponse("200", [{SingleMessageNotification:SingleMessageNotification,}],"the user is online"))
+        .json(new ApiResponse("200", {SingleMessageNotification:SingleMessageNotification,},"the user is online"))
 })
 
 const endSession=asyncHandler(async(req,res)=>{

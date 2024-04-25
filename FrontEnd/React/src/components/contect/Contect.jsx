@@ -7,7 +7,7 @@ const Contact = ({ userId, userContactInfo }) => {
    
     let dispatch=useDispatch()
     // const UserId=userId
-    const userName=userContactInfo?.userName
+    const name = userContactInfo?.name
     // const email=userContactInfo?.email
     // const about=userContactInfo?.about
     // const contactNo=userContactInfo?.contactNo
@@ -56,7 +56,7 @@ const Contact = ({ userId, userContactInfo }) => {
                     color: '#333',
                 }}
             >
-                {userName}
+                {name}
             </div>
 
             {/* Online Status Indicator */}

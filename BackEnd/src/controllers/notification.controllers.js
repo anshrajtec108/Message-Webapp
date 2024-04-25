@@ -49,6 +49,7 @@ try {
                     ]
                 }
             },
+            
             {
                 $project:{
                     chats:1
@@ -58,13 +59,34 @@ try {
                 $unwind: "$chats" // Unwind to access individual chat documents
             },
             {
+                $lookup: {
+                    from: 'users',
+                    localField: "chats.sendBy",
+                    foreignField: '_id',
+                    as: 'sendByUserDetail',
+                    pipeline: [
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                about:1,
+                                avatar: 1,
+                                contactNo: 1
+                            }
+                        }
+                    ]
+                }
+            },
+            {
                 $group: {
-                   
-                   _id: "$chats.sendBy", // Group by sendBy field
-                    relayId: { $push: "$_id" }, 
-                    chats: { $push: "$chats" } // Push each chat object into an array
+                    _id: "$chats.sendBy",
+                    sendByUserDetail: { $addToSet: "$sendByUserDetail" }, // Use $addToSet to accumulate sendByUserDetail
+                    relayId: { $push: "$_id" },
+                    chats: { $push: "$chats" }
                 }
             }
+
+
         ])
         if(!getdata){
            return "there no data update"

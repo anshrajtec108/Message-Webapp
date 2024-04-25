@@ -6,6 +6,7 @@ const ContactHeader = () => {
             <div className="flex items-center justify-between">
                 {/* Logo or big text */}
                 <h1 className="text-2xl font-bold">Messaging...</h1>
+                <h1 style={{cursor:'pointer'}}>🔔</h1>
             </div>
             <div className="mt-4">
                 {/* Search bar */}

@@ -91,7 +91,7 @@ const getAllContact = asyncHandler(async(req,res)=>{
         {
             $addFields: {
                 userContactInfo: {
-                    userName:'$contactUserInfo.name' , // Get the first userName value from the array
+                    name:'$contactUserInfo.name' , // Get the first userName value from the array
                     email: '$contactUserInfo.email',
                     avatar:'$contactUserInfo.avatar',
                     about: '$contactUserInfo.about',

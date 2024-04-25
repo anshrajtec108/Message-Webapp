@@ -61,7 +61,6 @@ const MessagingApp = ({ userId, userInfoObj }) => {
         };
     }, [userInfoObj, userInfoObj?.payload?.contactNo]);
 
-
     useEffect(() => {
         const scrollableElement = messagesEndRef.current;
         scrollableElement.addEventListener('scroll', handleScroll);
@@ -117,7 +116,7 @@ const MessagingApp = ({ userId, userInfoObj }) => {
                         className="h-8 w-8 rounded-full mr-2"
                         style={{ objectFit: 'cover' }}
                     />
-                    <span className="font-semibold ml-4  mr-5 text-lg">{userInfoObj.payload?.userName}</span>
+                    <span className="font-semibold ml-4  mr-5 text-lg">{userInfoObj.payload?.name}</span>
                     <span className="font-semibold text-lg"> {userInfoObj.payload?.contactNo} </span>
                 </div>
                 <span className="text-sm ml-9">{"online"}</span>
