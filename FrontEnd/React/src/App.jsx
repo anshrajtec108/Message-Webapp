@@ -5,6 +5,7 @@ import Main from './layers/Main';
 import Login from './components/registration/Login';
 import './App.css'
 import ProtectedRoute from './services/ProtectedRoute';
+import PopupComponent from './components/notification/Notification';
 function App() {
   
 
@@ -20,8 +21,9 @@ function App() {
   ]);
 
   return (
-    <RouterProvider router={router}>
-    </RouterProvider>
+    // <RouterProvider router={router}>
+    // </RouterProvider>
+    <PopupComponent/>
   );
 }
 
