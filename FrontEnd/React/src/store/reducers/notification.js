@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState={
     newNotification:false,
-    notificationObj:[]
+    notificationObj:[],
+    showNotificationDisplay:false
 }
 
 const notificationSlice = createSlice({
@@ -26,12 +27,20 @@ const notificationSlice = createSlice({
                 login: payLoad
             }
         },
+
+        saveShowNotificationDisplay(state,payLoad){
+            return{
+                ...state,
+                showNotificationDisplay: !state.showNotificationDisplay
+            }
+        }
     }
 })
 
 export const {
     saveNotificationObj,
-    saveNewNotification
+    saveNewNotification,
+    saveShowNotificationDisplay,
 } = notificationSlice.actions
 
 export default notificationSlice.reducer

@@ -5,10 +5,14 @@ import ContactHeader from '../components/contect/ContactHeader';
 import { makeDeleteRequest, makeGetRequest, makePostRequest } from '../services/api';
 import { useDispatch, useSelector } from "react-redux";
 import { redirect } from 'react-router-dom';
-
+import { saveNotificationObj } from '../store/reducers/notification';
+import NotificationCom from '../components/notification/Notification';
 function Main() {
     const currentUserLogin = useSelector((store) => store.currentUserLogin);
 
+    const Notification = useSelector((store) => store.notification)
+    console.log("Notification.notificationObj", Notification?.notificationObj?.payload?.SingleMessageNotification[0])
+    const dispatch=useDispatch()
     const [contactInfo, setContactInfo] = useState([]);
 
     //to display and call the user message
@@ -29,7 +33,9 @@ function Main() {
 
     const createSession = async () => {
         const res = await makePostRequest('/session/entrysession', {}, { "status": true }, {})
+        dispatch(saveNotificationObj(res.data))
         console.log("res of create session", res);
+     
         return
     }
     const endSession = async () => {
@@ -51,8 +57,10 @@ function Main() {
             endSession(); // Call endSession explicitly on component unmount as well
         };
     }, [])
+    const [showNtification, setShowNotification] = useState(false)
     return (
-        <div style={{ display: 'flex', height: '100vh' }}>
+        <>
+            <div style={{ display: 'flex', height: '100vh',  position: 'relative' }}>
             <div className="contactSide" style={{ flex: '2', background: 'url("https://i.ibb.co/q9mygMq/background.jpg") ', overflowY: 'auto', }}>
                 <ContactHeader />
                 <div className="contact">
@@ -71,6 +79,8 @@ function Main() {
 
             </div>
         </div>
+            <div style={{ display: showNtification ? 'block' : 'none', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>< NotificationCom /></div>
+        </>
     );
 }
 
