@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { makePostRequest, socket } from '../../services/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveIsNewContactDisplay } from '../../store/reducers/ContactmessageDisplay';
 
-const MessagingApp = ({ userId, userInfoObj }) => {
+const MessagingApp = () => {
+    let dispatch = useDispatch()
+    let currentUserInfo = useSelector((store) => store.currentUserinfo)
+    console.log('currentUserInfo108', currentUserInfo);
+    let isNewContact = currentUserInfo.isNewContactDisplay.payload
+    let userId =  currentUserInfo.userId 
+    let userInfoObj =  currentUserInfo.userObj 
     const [messages, setMessages] = useState([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -18,6 +26,9 @@ const MessagingApp = ({ userId, userInfoObj }) => {
         };
         try {
             const res = await makePostRequest('/chatmessage/get', {}, sendPayload, {});
+            if(isNewContact){
+                setPage(1)
+            }
             if (page === 1) {
                 setMessages([...res.data.reverse()]);
             } else {
@@ -31,8 +42,10 @@ const MessagingApp = ({ userId, userInfoObj }) => {
     const handleScroll = () => {
         const scrollableElement = messagesEndRef.current;
         if (scrollableElement.scrollTop === 0 && !loading) {
+            dispatch(saveIsNewContactDisplay(false))
             setLoading(true);
             setPage((prevPage) => prevPage + 1);
+
         }
     };
 //get all the message and Join the room
@@ -58,6 +71,7 @@ const MessagingApp = ({ userId, userInfoObj }) => {
         return () => {
             // Clean up the event listener when the component unmounts
             socket.off('Receivemessage', handleReceiveMessage);
+            
         };
     }, [userInfoObj, userInfoObj?.payload?.contactNo]);
 

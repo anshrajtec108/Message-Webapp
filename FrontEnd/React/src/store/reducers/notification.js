@@ -31,7 +31,7 @@ const notificationSlice = createSlice({
         saveShowNotificationDisplay(state,payLoad){
             return{
                 ...state,
-                showNotificationDisplay: !state.showNotificationDisplay
+                showNotificationDisplay: !(state.showNotificationDisplay)
             }
         }
     }

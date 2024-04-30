@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import MessagingApp from '../messageDisplay/MessageDisplay';
 import { useDispatch } from "react-redux";
-import { saveIsDisplay, saveUserId, saveUserObj } from '../../store/reducers/ContactmessageDisplay';
+import { saveIsDisplay, saveIsNewContactDisplay, saveUserId, saveUserObj } from '../../store/reducers/ContactmessageDisplay';
 
 const Contact = ({ userId, userContactInfo }) => {
    
@@ -17,6 +17,7 @@ const Contact = ({ userId, userContactInfo }) => {
     const handelClickOnContact=()=>{
         dispatch(saveIsDisplay(true))
         dispatch(saveUserId(userId))
+        dispatch(saveIsNewContactDisplay(true))
         dispatch(saveUserObj(userContactInfo))
     }
 

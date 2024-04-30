@@ -7,11 +7,8 @@ const ContactHeader = () => {
 
     const handelNotificationDisplay = (e) => {
         e.stopPropagation();
-        dispatch(saveShowNotificationDisplay())
+        dispatch(saveShowNotificationDisplay(true))
     }
- 
-    const Notification = useSelector((store) => store.notification)
-    console.log("Notification.notificationObj", Notification?.notificationObj?.payload?.SingleMessageNotification[0])
     return (
         <div className="bg-blue-500 text-white py-4 px-6 ">
             <div className="flex items-center justify-between">

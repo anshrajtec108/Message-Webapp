@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState={
     isDisplay:false,
+    isNewContactDisplay:false,
     userObj:{},
     userId:''
 }
@@ -38,6 +39,12 @@ const currentUserMessageSlice =createSlice({
                 isDisplay:payLoad
             }
         },
+        saveIsNewContactDisplay(state, payLoad) {
+            return {
+                ...state,
+                isNewContactDisplay: payLoad
+            }
+        },
 
 
     }
@@ -46,7 +53,8 @@ const currentUserMessageSlice =createSlice({
 export const{
     saveIsDisplay,
     saveUserId,
-    saveUserObj
+    saveUserObj,
+    saveIsNewContactDisplay
 } = currentUserMessageSlice.actions;
 
 export default currentUserMessageSlice.reducer;
