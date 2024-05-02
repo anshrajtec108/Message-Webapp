@@ -94,6 +94,7 @@ const getGroupChatMessage = asyncHandler(async (req, res) => {
                 as: "messageData"
             }
         },
+        { $unwind: '$messageData' },
         {
             $project: {
                 sendBYme: {

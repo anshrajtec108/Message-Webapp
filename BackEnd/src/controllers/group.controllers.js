@@ -50,7 +50,7 @@ const removeUserFromGroup=asyncHandler(async(req,res)=>{
     for (let i = 0; i < tempArray.length; i++) {
         if (tempArray[i] === userId) {
             tempArray.splice(i, 1); 
-            i--; // Decrement i to correctly iterate over the modified array
+            i--; 
             break; 
         }
     }
