@@ -2,7 +2,7 @@ import { UserStatus } from "../models/userStatus.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { getSingleMessageNotification } from "./notification.controllers.js";
+import { deleteNotificationSeen, getSingleMessageNotification } from "./notification.controllers.js";
 
 
 const entrySession=asyncHandler(async(req,res)=>{
@@ -25,6 +25,7 @@ const entrySession=asyncHandler(async(req,res)=>{
 const endSession=asyncHandler(async(req,res)=>{
     // const { userId }=req.body
     const  userId =req?.user?._id
+    const {relayArr}=req.body
 
     if (!userId) {
         throw new ApiError(500, "the userID is required ")
@@ -36,10 +37,11 @@ const endSession=asyncHandler(async(req,res)=>{
     }
 
     const deleteUserStatus=await UserStatus.findByIdAndDelete(userStatusId)
-
+    const deleteTheSingleRelayMessage = await deleteNotificationSeen(relayArr)
     // if (!deleteUserStatus) {
     //     throw new ApiError(500, "something want wrong  while delete user status ")
     // }
+    console.log("the relay is also clered ", deleteTheSingleRelayMessage);
     console.log('session is deleted ');
     return res.status(200)
         .json(new ApiResponse("200", [], "the user is offline"))

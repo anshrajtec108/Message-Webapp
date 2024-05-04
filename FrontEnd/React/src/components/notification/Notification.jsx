@@ -80,8 +80,6 @@ function Notification() {
       marginTop:'5%',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center',
-       // Using viewport height to center vertically
       backgroundColor: 'white',
       overflowY: 'scroll',
     }}
