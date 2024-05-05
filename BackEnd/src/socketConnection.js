@@ -19,7 +19,7 @@ io.on('connection', (socket) => {
 
     
     socket.on('sendMessage', (roomId, message) => {
-        // console.log('roomId, message', roomId, message);
+        console.log('roomId, message', roomId, message);
         io.to(roomId).emit('Receivemessage', message); // Emit message to everyone in the room
     });
 

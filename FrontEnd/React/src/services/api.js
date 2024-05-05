@@ -78,23 +78,24 @@ export const makePatchRequest = async (url, queryParams, body, headers = {}) => 
     }
 }
 
-export const makeDeleteRequest = async (url, queryParams, headers = {}) => {
+export const makeDeleteRequest = async (url, queryParams, body, headers = {}) => {
     try {
         const response = await axios.delete(
             BASE_URL + url,
             {
                 params: queryParams,
+                data: body, // Use 'data' instead of 'body' for DELETE requests in Axios
                 headers: {
                     Authorization: `Bearer ${Cookies.get('accessToken')}`, // Get access token from cookies
                     ...headers, // Include additional headers if provided
                 },
             }
-        )
-        return response?.data
+        );
+        return response?.data;
     } catch (error) {
-        console.log(error?.response?.status)
+        console.log(error?.response?.status);
     }
-}
+};
 
 const host = "ws://localhost:3000"; // Replace with your Socket.IO server URL
 export const socket = io.connect(host);

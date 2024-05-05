@@ -5,9 +5,11 @@ import ContactHeader from '../components/contect/ContactHeader';
 import { makeDeleteRequest, makeGetRequest, makePostRequest } from '../services/api';
 import { useDispatch, useSelector } from "react-redux";
 import { redirect } from 'react-router-dom';
-import { saveNotificationObj } from '../store/reducers/notification';
+import { saveNotificationObj, saverelayIdArr } from '../store/reducers/notification';
 import NotificationCom from '../components/notification/Notification';
 function Main() {
+    let relayIdArr = []
+   
     const currentUserLogin = useSelector((store) => store.currentUserLogin);
 
     const Notification = useSelector((store) => store.notification)
@@ -33,13 +35,21 @@ function Main() {
 
     const createSession = async () => {
         const res = await makePostRequest('/session/entrysession', {}, { "status": true }, {})
+        console.log("res of create session", res);
         dispatch(saveNotificationObj(res.data))
-        // console.log("res of create session", res);
+        console.log("Relay ID arr ", res?.data?.SingleMessageNotification[0]?.relayId);
+        relayIdArr = res?.data?.SingleMessageNotification[0]?.relayId
+        // dispatch(saverelayIdArr(res.data.SingleMessageNotification[0].relayId))
+        // console.log("r  sendthedataForEndSession", sendthedataForEndSession);
+
      
         return
     }
     const endSession = async () => {
-        await makeDeleteRequest('/session/endsession', {}, {})
+        let sendthedataForEndSession = {
+            relayArr: relayIdArr
+        }
+        await makeDeleteRequest('/session/endsession', {},sendthedataForEndSession ,{})
 
     }
 

@@ -100,8 +100,9 @@ try {
 const deleteNotificationSeen=async(relayIdArr)=>{
     // const objectIdArray = idsArray.map(id => mongoose.Types.ObjectId(id));
   try {
-      if(relayIdArr > 1 ){
-          const idArr = relayIdArr.map(id => mongoose.Types.ObjectId(id));
+      if (relayIdArr.length > 1 ){
+          console.log("many delete in deleteNotificationSeen");
+          const idArr = relayIdArr.map(id => new mongoose.Types.ObjectId(id));
   
           const deleteResult = await Relay.deleteMany({ _id: { $in: idArr } });
           return deleteResult;

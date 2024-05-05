@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { makePostRequest, socket } from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { saveIsNewContactDisplay } from '../../store/reducers/ContactmessageDisplay';
+import { saveNotificationObj } from '../../store/reducers/notification';
 
 const MessagingApp = () => {
     let dispatch = useDispatch()
     let currentUserInfo = useSelector((store) => store.currentUserinfo)
-    console.log('currentUserInfo108', currentUserInfo);
+    // console.log('currentUserInfo108', currentUserInfo);
     let isNewContact = currentUserInfo.isNewContactDisplay.payload
-    let userId =  currentUserInfo.userId 
+    // let userId =  currentUserInfo.userId 
     let userInfoObj =  currentUserInfo.userObj 
     const [messages, setMessages] = useState([]);
     const [page, setPage] = useState(1);
@@ -58,9 +59,14 @@ const MessagingApp = () => {
     //Socket Received message
     useEffect(() => {
         const handleReceiveMessage = (msg) => {
-            if (msg.sendBy == localStorage.getItem('Contect')){  
-                return 
-        }else{
+            console.log("msg.sendBy == localStorage.getItem('Contect')", msg.sendBy == userInfoObj?.payload?.contactNo);
+            if (msg.sendBy == localStorage.getItem('Contect')){
+                return
+            }
+            if (msg.sendBy != userInfoObj?.payload?.contactNo){  
+                        console.log("the send by === not equel to open one of contact");
+                // dispatch(saveNotificationObj(msg.message))
+            }else{
                 // console.log('Received message:', msg);
                 setMessages((prevMessages) => [...prevMessages, { ...msg, sendBYthem: true }]);
         }
@@ -86,7 +92,7 @@ const MessagingApp = () => {
     const handleMessageSend = async () => {
         try {
             if (messageInput.trim() !== '' && userInfoObj?.payload?.contactNo) {
-                socket.emit('sendMegSingle', { sendToContactNo: userInfoObj.payload.contactNo, content: messageInput });
+                // socket.emit('sendMegSingle', { sendToContactNo: userInfoObj.payload.contactNo, content: messageInput });
 
                 let sendMessageToSave = {
                     "content": messageInput,

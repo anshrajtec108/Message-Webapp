@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState={
     newNotification:false,
     notificationObj:[],
-    showNotificationDisplay:false
+    showNotificationDisplay:false,
+    relayIdArr:[]
 }
 
 const notificationSlice = createSlice({
@@ -33,7 +34,19 @@ const notificationSlice = createSlice({
                 ...state,
                 showNotificationDisplay: !(state.showNotificationDisplay)
             }
-        }
+        },
+
+        saverelayIdArr(state, payLoad) {
+            if (payLoad) {
+                console.log("  ...payLoad in saverelayIdArr",payLoad);
+                return {
+                    ...state,
+                    relayIdArr: {
+                        ...payLoad.payload
+                    }
+                }
+            }
+        },
     }
 })
 
@@ -41,6 +54,7 @@ export const {
     saveNotificationObj,
     saveNewNotification,
     saveShowNotificationDisplay,
+    saverelayIdArr,
 } = notificationSlice.actions
 
 export default notificationSlice.reducer
